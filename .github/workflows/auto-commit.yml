@@ -2,30 +2,32 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: '0 * * * *'  # every hour
-  workflow_dispatch:       # allow manual run
+    - cron: '0 * * * *'  # Runs every hour
+  workflow_dispatch:     # Allows manual trigger
 
 jobs:
-  commit:
+  auto-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Explicitly allows pushing changes
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Make or update files
-      run: |
-        echo "Auto commit at $(date -u)" > auto.txt
+      - name: Update file with timestamp
+        run: |
+          echo "Last auto-commit: $(date -u)" > auto.txt
 
-    - name: Configure Git
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-    - name: Commit and push
-      run: |
-        git add .
-        git commit -m "🕒 Auto commit at $(date -u)" || echo "No changes to commit"
-        git push
+      - name: Commit and push changes
+        run: |
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-commit: $(date -u)"
+          git push
