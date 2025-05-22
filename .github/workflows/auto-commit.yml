@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Make or update files
       run: |
@@ -27,5 +29,3 @@ jobs:
         git add .
         git commit -m "🕒 Auto commit at $(date -u)" || echo "No changes to commit"
         git push
-      env:
-        GIT_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
