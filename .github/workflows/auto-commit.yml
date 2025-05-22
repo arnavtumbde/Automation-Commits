@@ -1,0 +1,29 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Make or update files
+      run: |
+        echo "Auto commit at $(date -u)" > auto.txt
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    - name: Commit and push
+      run: |
+        git add .
+        git commit -m "🕒 Auto commit at $(date -u)" || echo "No changes to commit"
+        git push
