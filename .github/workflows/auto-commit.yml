@@ -2,8 +2,8 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *'  # every hour
+  workflow_dispatch:       # allow manual run
 
 jobs:
   commit:
@@ -27,3 +27,5 @@ jobs:
         git add .
         git commit -m "🕒 Auto commit at $(date -u)" || echo "No changes to commit"
         git push
+      env:
+        GIT_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
